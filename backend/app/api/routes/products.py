@@ -3,21 +3,14 @@ from typing import Optional, Literal
 
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import func, asc, desc, and_
+from sqlalchemy import func, asc, desc, and_, or_
 
-from app.db.session import SessionLocal
+from app.api.deps import get_db
 from app.models.product import Product
 from app.models.product_variation import ProductVariation
 from app.schemas.product import PaginatedProducts, ProductOut, ProductVariationOut
 
 router = APIRouter(prefix="/products", tags=["products"])
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.get("", response_model=PaginatedProducts)
 def list_products(
@@ -48,14 +41,33 @@ def list_products(
     - Returns min_price/max_price/total_stock computed from variants.
     """
 
-    # base query (join variants)
-    base = db.query(Product).join(ProductVariation, ProductVariation.product_id == Product.id)
+    variation_filters = any(
+        [
+            colour,
+            size,
+            min_price is not None,
+            max_price is not None,
+            in_stock_only,
+            sort_by == "price",
+        ]
+    )
+
+    # base query (join variants when needed)
+    if variation_filters:
+        base = db.query(Product).join(ProductVariation, ProductVariation.product_id == Product.id)
+    else:
+        base = db.query(Product).outerjoin(ProductVariation, ProductVariation.product_id == Product.id)
 
     conditions = []
 
     if active_only:
         conditions.append(Product.is_active.is_(True))
-        conditions.append(ProductVariation.is_active.is_(True))
+        if variation_filters:
+            conditions.append(ProductVariation.is_active.is_(True))
+        else:
+            conditions.append(
+                or_(ProductVariation.is_active.is_(True), ProductVariation.id.is_(None))
+            )
 
     if q:
         conditions.append(Product.name.ilike(f"%{q}%"))

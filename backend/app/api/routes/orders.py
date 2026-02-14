@@ -54,30 +54,51 @@ def add_item(
     if not product or not product.is_active:
         raise HTTPException(status_code=404, detail="Product not available")
 
-    unit_price = None
-    if payload.variant_id:
-        variant = (
-            db.query(ProductVariation)
-            .filter(ProductVariation.id == payload.variant_id)
-            .filter(ProductVariation.product_id == product.id)
-            .filter(ProductVariation.is_active.is_(True))
-            .first()
-        )
-        if not variant:
-            raise HTTPException(status_code=404, detail="Variant not found")
-        if variant.stock < payload.quantity:
-            raise HTTPException(status_code=400, detail="Not enough stock")
-        unit_price = variant.unit_price
-    else:
+    if not payload.variant_id:
         # If you require variants always, enforce it:
         raise HTTPException(status_code=400, detail="variant_id is required for this product")
+
+    variant = (
+        db.query(ProductVariation)
+        .filter(ProductVariation.id == payload.variant_id)
+        .filter(ProductVariation.product_id == product.id)
+        .filter(ProductVariation.is_active.is_(True))
+        .first()
+    )
+    if not variant:
+        raise HTTPException(status_code=404, detail="Variant not found")
+
+    existing_item = (
+        db.query(OrderItem)
+        .filter(
+            and_(
+                OrderItem.order_id == order.id,
+                OrderItem.product_id == product.id,
+                OrderItem.variant_id == payload.variant_id,
+            )
+        )
+        .first()
+    )
+
+    if existing_item:
+        new_quantity = existing_item.quantity + payload.quantity
+        if variant.stock < new_quantity:
+            raise HTTPException(status_code=400, detail="Not enough stock")
+        existing_item.quantity = new_quantity
+        db.add(existing_item)
+        db.commit()
+        db.refresh(existing_item)
+        return existing_item
+
+    if variant.stock < payload.quantity:
+        raise HTTPException(status_code=400, detail="Not enough stock")
 
     item = OrderItem(
         order_id=order.id,
         product_id=product.id,
         variant_id=payload.variant_id,
         quantity=payload.quantity,
-        unit_price=unit_price,  # snapshot price at time of add
+        unit_price=variant.unit_price,  # snapshot price at time of add
     )
     db.add(item)
     db.commit()
@@ -142,32 +163,40 @@ def checkout(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
-    order = db.query(Order).filter(and_(Order.id == order_id, Order.user_id == user.id)).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    if order.status != "cart":
-        raise HTTPException(status_code=400, detail="Order cannot be checked out")
+    with db.begin():
+        order = (
+            db.query(Order)
+            .filter(and_(Order.id == order_id, Order.user_id == user.id))
+            .with_for_update()
+            .first()
+        )
+        if not order:
+            raise HTTPException(status_code=404, detail="Order not found")
+        if order.status != "cart":
+            raise HTTPException(status_code=400, detail="Order cannot be checked out")
 
-    items = db.query(OrderItem).filter(OrderItem.order_id == order.id).all()
-    if not items:
-        raise HTTPException(status_code=400, detail="Cart is empty")
+        items = db.query(OrderItem).filter(OrderItem.order_id == order.id).all()
+        if not items:
+            raise HTTPException(status_code=400, detail="Cart is empty")
 
-    # Reduce stock (simple approach)
-    for item in items:
-        if item.variant_id:
-            variant = db.query(ProductVariation).filter(ProductVariation.id == item.variant_id).first()
-            if not variant or not variant.is_active:
-                raise HTTPException(status_code=400, detail="A variant is no longer available")
-            if variant.stock < item.quantity:
-                raise HTTPException(status_code=400, detail="Insufficient stock during checkout")
-            variant.stock -= item.quantity
+        # Reduce stock (locked)
+        for item in items:
+            if item.variant_id:
+                variant = (
+                    db.query(ProductVariation)
+                    .filter(ProductVariation.id == item.variant_id)
+                    .with_for_update()
+                    .first()
+                )
+                if not variant or not variant.is_active:
+                    raise HTTPException(status_code=400, detail="A variant is no longer available")
+                if variant.stock < item.quantity:
+                    raise HTTPException(status_code=400, detail="Insufficient stock during checkout")
+                variant.stock -= item.quantity
 
-    order.status = "paid"
-    # If your model has paid_at with server_default only, set it here if needed:
-    # order.paid_at = datetime.utcnow()
-    order.paid_at = datetime.utcnow()
+        order.status = "paid"
+        order.paid_at = datetime.utcnow()
 
-    db.commit()
     return {"message": "Checked out", "order_id": str(order.id)}
 
 
@@ -181,6 +210,16 @@ def update_order_status(
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
+
+    if user.role_id == 2:
+        foreign_item_count = (
+            db.query(OrderItem)
+            .join(Product, OrderItem.product_id == Product.id)
+            .filter(and_(OrderItem.order_id == order.id, Product.user_id != user.id))
+            .count()
+        )
+        if foreign_item_count > 0:
+            raise HTTPException(status_code=403, detail="Not allowed")
 
     if payload.status == "shipped":
         if order.status != "paid":
