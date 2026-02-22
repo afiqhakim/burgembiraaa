@@ -1,0 +1,6 @@
+{
+  "name": "backend",
+  "scripts": {
+    "dev": ".\\venv\\Scripts\\uvicorn app.main:app --reload"
+  }
+}
