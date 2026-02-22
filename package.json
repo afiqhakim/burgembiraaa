@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "devDependencies": {
+    "turbo": "latest"
+  },
+  "scripts": {
+    "dev": "turbo run dev"
+  },
+  "packageManager": "npm@11.7.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
