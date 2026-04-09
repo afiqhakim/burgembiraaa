@@ -62,7 +62,7 @@
   --background: #fcfff7;
   --foreground: #0f0f0f;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(30.919% 0.00004 271.152);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: #f3a436;
@@ -157,6 +157,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 .hero-text {

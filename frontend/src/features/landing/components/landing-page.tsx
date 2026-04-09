@@ -95,7 +95,7 @@ export default function LandingPage() {
     () => ({
       transform: `translateY(${Math.min(scrollY * 0.2, 140)}px) `,
       backgroundImage:
-        "linear-gradient(rgba(15,15,15,0.35), rgba(15,15,15,0.35)), url('/film_burgembiraaa.jpg')",
+        "linear-gradient(rgba(15,15,15,0.55), rgba(15,15,15,0.65)), url('/film_burgembiraaa.jpg')",
     }),
     [scrollY]
   );

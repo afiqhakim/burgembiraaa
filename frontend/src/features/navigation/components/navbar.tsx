@@ -31,7 +31,7 @@ export default function Navbar() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 text-paper transition-all duration-300",
-        transparent ? "bg-transparent shadow-none" : "bg-ink/95 shadow-xs backdrop-blur"
+        transparent ? "bg-transparent shadow-none" : "bg-ink shadow-xs backdrop-blur"
       )}
     >
       <div className="mx-auto grid w-full max-w-6xl grid-cols-3 items-center px-4 py-4 sm:px-6">
@@ -43,7 +43,7 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <Link href="/" className="inline-flex items-center justify-self-center text-lg font-semibold tracking-tight text-brand">
+        <Link href="/" className="inline-flex items-center justify-self-center text-xl font-brand font-semibold tracking-tight text-brand">
           <Image src="/logo.png" alt="Burgembiraaa Logo" width={30} height={30} className="mr-2 inline-block" />
           Burgembiraaa
         </Link>
