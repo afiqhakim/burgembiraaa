@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Burgembiraaa (Beginner Setup Guide)
 
 This project has 2 apps:
@@ -36,18 +37,42 @@ Install these first:
 ## Step 1: Install Dependencies
 
 From project root:
+=======
+﻿# burgembiraaa
+
+Monorepo with:
+- `frontend`: Next.js app
+- `backend`: FastAPI app + Alembic migrations
+- Root: npm workspaces + Turborepo orchestration
+
+## Prerequisites
+
+- Node.js 20+
+- npm 10+
+- Python 3.12+
+- Docker (for local Postgres)
+
+## 1) Install dependencies
+
+From repo root:
+>>>>>>> 1f1825000cd89e52e1344dd2d6257a67881860fc
 
 ```bash
 npm install
 ```
 
+<<<<<<< HEAD
 For backend Python packages:
+=======
+Backend Python deps:
+>>>>>>> 1f1825000cd89e52e1344dd2d6257a67881860fc
 
 ```bash
 cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
+<<<<<<< HEAD
 cd ..
 ```
 
@@ -61,6 +86,25 @@ copy frontend\.env.local.example frontend\.env.local
 Then open `backend/.env` and set your real values.
 
 ## Step 3: Start PostgreSQL (Docker)
+=======
+```
+
+## 2) Configure environment
+
+Create backend env file:
+
+```bash
+copy backend\.env.example backend\.env
+```
+
+If needed, create frontend env file:
+
+```bash
+copy frontend\.env.local.example frontend\.env.local
+```
+
+## 3) Start Postgres
+>>>>>>> 1f1825000cd89e52e1344dd2d6257a67881860fc
 
 ```bash
 docker run --name postgres-dev ^
@@ -71,11 +115,25 @@ docker run --name postgres-dev ^
   -d postgres:15
 ```
 
+<<<<<<< HEAD
 ## Step 4: Run Database Migrations
+=======
+## 4) Run database migrations
+
+```bash
+cd backend
+alembic upgrade head
+```
+
+## 5) Run apps
+
+Activate backend virtualenv in your terminal first:
+>>>>>>> 1f1825000cd89e52e1344dd2d6257a67881860fc
 
 ```bash
 cd backend
 .venv\Scripts\activate
+<<<<<<< HEAD
 alembic upgrade head
 cd ..
 ```
@@ -116,3 +174,30 @@ npm run dev:backend
 Never commit real secrets:
 - do not commit `.env`
 - only commit `.env.example`
+=======
+cd ..
+```
+
+From root (both apps via Turbo):
+
+```bash
+npm run dev
+```
+
+Or individually:
+
+```bash
+npm run dev:frontend
+npm run dev:backend
+```
+
+Expected local URLs:
+- Frontend: `http://localhost:3000`
+- Backend API: `http://127.0.0.1:8000`
+
+## Notes
+
+- Backend reads config from `backend/.env`.
+- Default backend CORS origin is `http://localhost:3000`; override with `CORS_ORIGINS`.
+- Do not commit real `.env` files. Keep secrets only in local env files.
+>>>>>>> 1f1825000cd89e52e1344dd2d6257a67881860fc
