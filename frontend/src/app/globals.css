@@ -7,6 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-accent-red: var(--accent-red);
   --font-sans: var(--font-body);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-heading: var(--font-brand);
@@ -52,6 +56,9 @@
   --brand: #f3a436;
   --neutral: #fcfff7;
   --black: #0f0f0f;
+  --paper: var(--neutral);
+  --ink: var(--black);
+  --accent-red: #a20021;
   --background: #fcfff7;
   --foreground: #0f0f0f;
   --card: oklch(1 0 0);
@@ -177,14 +184,14 @@ html {
 }
 
 .read-more-btn {
-  background-color: #fcfff7;
-  color: #0f0f0f;
+  background-color: var(--paper);
+  color: var(--ink);
   padding: 0.75rem 1.5rem;
   border-radius: 0.375rem;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .read-more-btn:hover {
-  background-color: #f3a436;
-  color: #fcfff7;
+  background-color: var(--brand);
+  color: var(--paper);
 }

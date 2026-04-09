@@ -1,21 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ShoppingBag, User } from "lucide-react";
 
+import AppIcon from "@/components/shared/app-icon";
 import { cn } from "@/lib/utils";
 
-const publicLinks = [
-  { href: "/", label: "Main" },
-  { href: "/about-us", label: "About Us" },
+const leftLinks = [
+  { href: "/about-us", label: "About" },
   { href: "/contact", label: "Contact" },
-  { href: "/product", label: "Product" },
-];
-
-const privateLinks = [
-  { href: "/profile", label: "Profile" },
-  { href: "/cart", label: "Cart" },
 ];
 
 export default function Navbar() {
@@ -34,41 +30,35 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b text-[#FCFFF7] transition-all duration-300",
-        transparent ? "border-transparent bg-transparent shadow-none" : "border-[#f3a436]/30 bg-[#0F0F0F]/95 shadow-md backdrop-blur"
+        "fixed inset-x-0 top-0 z-50 text-paper transition-all duration-300",
+        transparent ? "bg-transparent shadow-none" : "bg-ink/95 shadow-xs backdrop-blur"
       )}
     >
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-[#f3a436]">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-3 items-center px-4 py-4 sm:px-6">
+        <nav className="flex items-center gap-2 justify-self-start text-sm">
+          {leftLinks.map((item) => (
+            <Link key={item.href} href={item.href} className="rounded-md px-3 py-1.5 text-paper hover:bg-brand hover:text-ink">
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <Link href="/" className="inline-flex items-center justify-self-center text-lg font-semibold tracking-tight text-brand">
+          <Image src="/logo.png" alt="Burgembiraaa Logo" width={30} height={30} className="mr-2 inline-block" />
           Burgembiraaa
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-2 text-sm">
-          {publicLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="rounded-md px-3 py-1.5 text-[#FCFFF7] hover:bg-[#f3a436] hover:text-[#0F0F0F]">
-              {item.label}
-            </Link>
-          ))}
-
-          <span className="mx-1 h-4 w-px bg-[#FCFFF7]/30" />
-
-          {privateLinks.map((item) => (
-            <Link key={item.href} href={item.href} className="rounded-md px-3 py-1.5 text-[#FCFFF7] hover:bg-[#f3a436] hover:text-[#0F0F0F]">
-              {item.label}
-            </Link>
-          ))}
-
-          <span className="mx-1 h-4 w-px bg-[#FCFFF7]/30" />
-
-          <a
-            href="/api/auth/mock-login?role=customer"
-            className="rounded-md bg-[#f3a436] px-3 py-1.5 font-medium text-[#0F0F0F] hover:opacity-90"
+        <nav className="flex items-center gap-2 justify-self-end">
+          <Link
+            href="/profile"
+            aria-label="Profile"
+            className="rounded-md p-2 text-paper hover:bg-brand hover:text-ink"
           >
-            Login (Demo)
-          </a>
-          <a href="/api/auth/logout" className="rounded-md px-3 py-1.5 text-[#FCFFF7] hover:bg-[#f3a436] hover:text-[#0F0F0F]">
-            Logout
-          </a>
+            <AppIcon icon={User} />
+          </Link>
+          <Link href="/cart" aria-label="Cart" className="rounded-md p-2 text-paper hover:bg-brand hover:text-ink">
+            <AppIcon icon={ShoppingBag} />
+          </Link>
         </nav>
       </div>
     </header>

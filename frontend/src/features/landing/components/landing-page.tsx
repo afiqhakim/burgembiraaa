@@ -115,7 +115,7 @@ export default function LandingPage() {
       <section className="relative h-svh overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center will-change-transform" style={heroBgStyle} />
         <div
-          className={`relative flex h-full items-center justify-center px-6 text-center text-3xl font-bold text-[#FCFFF7] transition-opacity duration-700 md:text-5xl ${
+          className={`relative flex h-full items-center justify-center px-6 text-center text-3xl font-bold text-paper transition-opacity duration-700 md:text-5xl ${
             heroVisible ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -123,23 +123,23 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section ref={statsRef} className="stats-section flex min-h-[70svh] items-center justify-center bg-[#FCFFF7] px-6 text-[#0F0F0F]">
+      <section ref={statsRef} className="stats-section flex min-h-[70svh] items-center justify-center bg-paper px-6 text-ink">
         <div className="space-y-6 text-center text-xl md:text-2xl">
           <div>
-            This year we&apos;ve made <span className="text-4xl font-bold text-[#A20021]">{counters.popups}</span> pop ups
+            This year we&apos;ve made <span className="text-4xl font-bold text-accent-red">{counters.popups}</span> pop ups
           </div>
           <div>
-            <span className="text-4xl font-bold text-[#A20021]">{counters.burgers}</span> burgers sold
+            <span className="text-4xl font-bold text-accent-red">{counters.burgers}</span> burgers sold
           </div>
           <div>
-            <span className="text-4xl font-bold text-[#A20021]">{counters.rotijohn}</span> roti johns sold
+            <span className="text-4xl font-bold text-accent-red">{counters.rotijohn}</span> roti johns sold
           </div>
         </div>
       </section>
 
       <section className="relative min-h-[85svh] overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center will-change-transform" style={storyBgStyle} />
-        <div className="our-story-section relative flex min-h-[85svh] flex-col items-center justify-center px-6 text-center text-[#FCFFF7]">
+        <div className="our-story-section relative flex min-h-[85svh] flex-col items-center justify-center px-6 text-center text-paper">
           <h2 className="mb-6 text-4xl font-bold">Our Story</h2>
           <p className="mb-8 max-w-2xl text-lg">
             It all started with a mengopi session in February 2025. As the Malaysian Festival in Bristol approached, we
@@ -151,26 +151,26 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-[#FCFFF7] px-4 py-20 text-[#0F0F0F]">
+      <section className="bg-paper px-4 py-20 text-ink">
         <div className="highlights-heading mb-12 text-center text-3xl font-semibold">Our Highlights</div>
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
           {highlights.map((item) => (
-            <article key={item.title} className="fade-card rounded-xl bg-[#0F0F0F] p-6 text-white shadow-lg">
-              <div className="mb-4 aspect-[5/6] w-full rounded-md bg-[linear-gradient(160deg,#f3a436_0%,#A20021_100%)]" />
+            <article key={item.title} className="fade-card rounded-xl bg-ink p-6 text-paper shadow-lg">
+              <div className="mb-4 aspect-[5/6] w-full rounded-md bg-[linear-gradient(160deg,var(--brand)_0%,var(--accent-red)_100%)]" />
               <h3 className="text-lg font-bold">{item.title}</h3>
-              <p className="mt-2 text-sm text-white/90">{item.copy}</p>
+              <p className="mt-2 text-sm text-paper/90">{item.copy}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <footer className="bg-[#0F0F0F] px-6 py-10 text-center text-[#FCFFF7]">
+      <footer className="bg-ink px-6 py-10 text-center text-paper">
         <h2 className="text-3xl font-bold">Burgembiraaa</h2>
         <div className="mt-6 flex justify-center gap-8 text-lg">
-          <Link href="/" className="hover:text-[#f3a436]">
+          <Link href="/" className="hover:text-brand">
             Home
           </Link>
-          <Link href="/about-us" className="hover:text-[#f3a436]">
+          <Link href="/about-us" className="hover:text-brand">
             About
           </Link>
         </div>
