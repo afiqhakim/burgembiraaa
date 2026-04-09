@@ -1,4 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { cn } from "@/lib/utils";
 
 const publicLinks = [
   { href: "/", label: "Main" },
@@ -13,8 +19,25 @@ const privateLinks = [
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const isLanding = pathname === "/";
+  const transparent = isLanding && !scrolled;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="border-b border-[#f3a436]/30 bg-[#0F0F0F] text-[#FCFFF7]">
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 border-b text-[#FCFFF7] transition-all duration-300",
+        transparent ? "border-transparent bg-transparent shadow-none" : "border-[#f3a436]/30 bg-[#0F0F0F]/95 shadow-md backdrop-blur"
+      )}
+    >
       <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
         <Link href="/" className="text-lg font-semibold tracking-tight text-[#f3a436]">
           Burgembiraaa
