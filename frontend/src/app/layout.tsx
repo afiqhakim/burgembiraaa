@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/features/navigation/components/navbar";
+import SplashIntro from "@/features/intro/components/splash-intro";
 
 const sourceSans3 = Source_Sans_3({
   variable: "--font-body",
@@ -31,6 +32,7 @@ export default function RootLayout({
       className={`${sourceSans3.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <SplashIntro />
         <Navbar />
         <main className="w-full flex-1 pt-16">
           {children}
