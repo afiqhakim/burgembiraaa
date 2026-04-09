@@ -4,7 +4,11 @@
     "turbo": "latest"
   },
   "scripts": {
-    "dev": "turbo run dev"
+    "dev": "turbo run dev --ui=tui",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
   },
   "packageManager": "npm@11.7.0",
   "workspaces": [
