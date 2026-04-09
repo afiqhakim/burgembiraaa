@@ -4,17 +4,24 @@ This repo has 2 apps:
 - `frontend` (Next.js website)
 - `backend` (FastAPI API + PostgreSQL)
 
-## Quick Start (Windows PowerShell)
+## Prerequisites
 
-1. Install root Node deps:
+- Node.js 20+
+- npm 10+
+- Python 3.12+
+- Docker Desktop
+
+## 1) Install root dependencies
 
 ```bash
 npm install
 ```
 
-2. Setup backend Python env:
+## 2) Setup backend Python environment
 
-```bash
+### Windows (PowerShell)
+
+```powershell
 cd backend
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -22,35 +29,67 @@ python -m pip install -r requirements.txt
 cd ..
 ```
 
-3. Create env files:
+### macOS/Linux (bash/zsh)
 
 ```bash
-copy backend\.env.example backend\.env
-copy frontend\.env.local.example frontend\.env.local
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+cd ..
 ```
 
-4. Start DB (first time):
+## 3) Create local env files
+
+### Windows (PowerShell)
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.local.example frontend/.env.local
+```
+
+### macOS/Linux (bash/zsh)
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.local.example frontend/.env.local
+```
+
+## 4) Start PostgreSQL with Docker
+
+First time:
 
 ```bash
 docker run --name postgres-dev -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=app_db -p 5432:5432 -d postgres:15
 ```
 
-If already created:
+If container already exists:
 
 ```bash
 docker start postgres-dev
 ```
 
-5. Run migrations:
+## 5) Run migrations
 
-```bash
+### Windows (PowerShell)
+
+```powershell
 cd backend
 .\.venv\Scripts\Activate.ps1
 alembic upgrade head
 cd ..
 ```
 
-6. Run apps:
+### macOS/Linux (bash/zsh)
+
+```bash
+cd backend
+source .venv/bin/activate
+alembic upgrade head
+cd ..
+```
+
+## 6) Run the apps
 
 ```bash
 npm run dev
@@ -61,7 +100,7 @@ URLs:
 - Backend: `http://127.0.0.1:8000`
 - Backend docs: `http://127.0.0.1:8000/docs`
 
-## Useful Commands
+## Useful commands
 
 ```bash
 npm run dev:frontend
@@ -70,14 +109,9 @@ npm run build
 npm run lint
 ```
 
-## shadcn MCP + CLI
+## shadcn
 
-shadcn is already initialized in `frontend`.
-
-### MCP status
-- The shadcn MCP tools detect this project and `@shadcn` registry.
-
-### CLI usage
+shadcn is initialized in `frontend`.
 
 From `frontend`:
 
@@ -87,7 +121,7 @@ npm run ui:add -- button
 npm run ui:add -- card
 ```
 
-## Security Rules (Important)
+## Security rules
 
 - Never commit real `.env` files.
 - Only commit `.env.example` templates.
