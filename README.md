@@ -1,49 +1,66 @@
-﻿# burgembiraaa
+﻿# Burgembiraaa (Beginner Setup Guide)
 
-Monorepo with:
-- `frontend`: Next.js app
-- `backend`: FastAPI app + Alembic migrations
-- Root: npm workspaces + Turborepo orchestration
+This project has 2 apps:
+- `frontend` = website (Next.js)
+- `backend` = API server (FastAPI + PostgreSQL)
 
-## Prerequisites
+Think of it like this:
+- frontend shows the UI
+- backend stores data and business logic
 
+## Why `.env` Matters
+
+A `.env` file stores private values (secrets), like:
+- database password
+- JWT/secret key
+
+If a real `.env` is committed to GitHub:
+- anyone can copy your credentials
+- your database/app can be accessed by others
+- even if you delete the file later, old commits still keep a copy
+
+So we keep only template files in git:
+- `backend/.env.example`
+- `frontend/.env.local.example`
+
+You create your own local `.env` files from these templates.
+
+## Requirements
+
+Install these first:
 - Node.js 20+
 - npm 10+
 - Python 3.12+
-- Docker (for local Postgres)
+- Docker Desktop
 
-## 1) Install dependencies
+## Step 1: Install Dependencies
 
-From repo root:
+From project root:
 
 ```bash
 npm install
 ```
 
-Backend Python deps:
+For backend Python packages:
 
 ```bash
 cd backend
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
+cd ..
 ```
 
-## 2) Configure environment
-
-Create backend env file:
+## Step 2: Create Local Env Files
 
 ```bash
 copy backend\.env.example backend\.env
-```
-
-If needed, create frontend env file:
-
-```bash
 copy frontend\.env.local.example frontend\.env.local
 ```
 
-## 3) Start Postgres
+Then open `backend/.env` and set your real values.
+
+## Step 3: Start PostgreSQL (Docker)
 
 ```bash
 docker run --name postgres-dev ^
@@ -54,42 +71,48 @@ docker run --name postgres-dev ^
   -d postgres:15
 ```
 
-## 4) Run database migrations
+## Step 4: Run Database Migrations
 
 ```bash
 cd backend
+.venv\Scripts\activate
 alembic upgrade head
+cd ..
 ```
 
-## 5) Run apps
+## Step 5: Run the Apps
 
-Activate backend virtualenv in your terminal first:
+In a terminal where backend venv is active:
 
 ```bash
 cd backend
 .venv\Scripts\activate
 cd ..
-```
-
-From root (both apps via Turbo):
-
-```bash
 npm run dev
 ```
 
-Or individually:
+This starts both apps via Turborepo.
+
+Expected URLs:
+- frontend: `http://localhost:3000`
+- backend: `http://127.0.0.1:8000`
+
+## Useful Commands
+
+Run only frontend:
 
 ```bash
 npm run dev:frontend
+```
+
+Run only backend:
+
+```bash
 npm run dev:backend
 ```
 
-Expected local URLs:
-- Frontend: `http://localhost:3000`
-- Backend API: `http://127.0.0.1:8000`
+## Team Rule (Important)
 
-## Notes
-
-- Backend reads config from `backend/.env`.
-- Default backend CORS origin is `http://localhost:3000`; override with `CORS_ORIGINS`.
-- Do not commit real `.env` files. Keep secrets only in local env files.
+Never commit real secrets:
+- do not commit `.env`
+- only commit `.env.example`
