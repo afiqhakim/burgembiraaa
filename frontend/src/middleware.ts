@@ -10,7 +10,6 @@ const publicPaths = new Set([
   "/product",
   "/login",
   "/forbidden",
-  "/navbar-component-01",
 ]);
 
 function isProtectedPath(pathname: string) {
