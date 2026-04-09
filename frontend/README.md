@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+﻿# Frontend (Next.js + shadcn/ui)
 
-## Getting Started
+This is the frontend app for Burgembiraaa.
 
-First, run the development server:
+## Stack
+
+- Next.js (App Router)
+- React + TypeScript
+- Tailwind CSS v4
+- shadcn/ui
+
+## Start
+
+From repo root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev:frontend
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App URL:
+- `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create local env file:
 
-## Learn More
+```bash
+copy .env.local.example .env.local
+```
 
-To learn more about Next.js, take a look at the following resources:
+Current variable:
+- `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## shadcn/ui Setup Status
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Already initialized in this app:
+- `components.json` exists
+- Aliases use `@/*`
+- Base component created (`src/components/ui/button.tsx`)
 
-## Deploy on Vercel
+## Add shadcn components
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+From `frontend` directory:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run ui:add -- button
+npm run ui:add -- input
+npm run ui:add -- card
+```
+
+List available items:
+
+```bash
+npm run ui:list
+```
+
+## Lint
+
+```bash
+npm run lint
+```

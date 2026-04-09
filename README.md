@@ -1,109 +1,94 @@
-﻿# burgembiraaa
+﻿# Burgembiraaa Monorepo
 
-Monorepo with:
-- `frontend`: Next.js app
-- `backend`: FastAPI app + Alembic migrations
-- Root: npm workspaces + Turborepo orchestration
+This repo has 2 apps:
+- `frontend` (Next.js website)
+- `backend` (FastAPI API + PostgreSQL)
 
-## Prerequisites
+## Quick Start (Windows PowerShell)
 
-- Node.js 20+
-- npm 10+
-- Python 3.12+
-- Docker (for local Postgres)
-
-## 1) Install dependencies
-
-From repo root:
+1. Install root Node deps:
 
 ```bash
 npm install
 ```
 
-For backend Python packages:
+2. Setup backend Python env:
 
 ```bash
 cd backend
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 cd ..
 ```
 
-## Step 2: Create Local Env Files
+3. Create env files:
 
 ```bash
 copy backend\.env.example backend\.env
 copy frontend\.env.local.example frontend\.env.local
 ```
 
-Then open `backend/.env` and set your real values.
-
-## Step 3: Start PostgreSQL (Docker)
+4. Start DB (first time):
 
 ```bash
-docker run --name postgres-dev ^
-  -e POSTGRES_USER=postgres ^
-  -e POSTGRES_PASSWORD=password ^
-  -e POSTGRES_DB=app_db ^
-  -p 5432:5432 ^
-  -d postgres:15
+docker run --name postgres-dev -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=password -e POSTGRES_DB=app_db -p 5432:5432 -d postgres:15
 ```
 
-or (for windows powershell)
-
-```bash
-docker run --name postgres-dev -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=app_db -p 5432:5432 -d postgres:15
-```
-
-or if already exist 
+If already created:
 
 ```bash
 docker start postgres-dev
 ```
 
-## Step 4: Run Database Migrations
+5. Run migrations:
 
 ```bash
 cd backend
-.venv\Scripts\activate
+.\.venv\Scripts\Activate.ps1
 alembic upgrade head
 cd ..
 ```
 
-## Step 5: Run the Apps
-
-In a terminal where backend venv is active:
+6. Run apps:
 
 ```bash
-cd backend
-.venv\Scripts\activate
-cd ..
 npm run dev
 ```
 
-This starts both apps via Turborepo.
-
-Expected URLs:
-- frontend: `http://localhost:3000`
-- backend: `http://127.0.0.1:8000`
+URLs:
+- Frontend: `http://localhost:3000`
+- Backend: `http://127.0.0.1:8000`
+- Backend docs: `http://127.0.0.1:8000/docs`
 
 ## Useful Commands
 
-Run only frontend:
-
 ```bash
 npm run dev:frontend
+npm run dev:backend
+npm run build
+npm run lint
 ```
 
-Run only backend:
+## shadcn MCP + CLI
+
+shadcn is already initialized in `frontend`.
+
+### MCP status
+- The shadcn MCP tools detect this project and `@shadcn` registry.
+
+### CLI usage
+
+From `frontend`:
 
 ```bash
-npm run dev:backend
+npm run ui:list
+npm run ui:add -- button
+npm run ui:add -- card
 ```
 
-## Team Rule (Important)
+## Security Rules (Important)
 
-Never commit real secrets:
-- do not commit `.env`
-- only commit `.env.example`
+- Never commit real `.env` files.
+- Only commit `.env.example` templates.
+- If secrets were ever committed, rotate them and rewrite history.
