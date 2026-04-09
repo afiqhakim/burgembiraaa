@@ -3,9 +3,15 @@
   "ui": "tui",
   "tasks": {
     "dev": {
-        "cache": false,
-      "persistent": true,
-      "interactive": true
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     }
   }
 }
