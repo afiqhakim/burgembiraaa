@@ -11,8 +11,9 @@ export default function SplashIntro() {
   const [phase, setPhase] = useState<Phase>("visible");
 
   useEffect(() => {
-    const fadeTimer = window.setTimeout(() => setPhase("fading"), 1200);
-    const hideTimer = window.setTimeout(() => setPhase("hidden"), 1750);
+    // Keep intro visible long enough to feel intentional, then fade out.
+    const fadeTimer = window.setTimeout(() => setPhase("fading"), 2000);
+    const hideTimer = window.setTimeout(() => setPhase("hidden"), 2100);
 
     return () => {
       window.clearTimeout(fadeTimer);
@@ -26,13 +27,13 @@ export default function SplashIntro() {
     <div
       aria-hidden
       className={cn(
-        "fixed inset-0 z-120 flex items-center justify-center bg-[#141211] transition-opacity duration-[2s]",
+        "fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-300 will-change-[opacity]",
         phase === "fading" ? "opacity-0" : "opacity-100"
       )}
     >
-      <div className="flex flex-col items-center gap-4 text-paper">
-        <Image src="/logo.png" alt="Burgembiraaa logo" width={70} height={70} priority className="splash-pulse" />
-        <p className="font-brand font-semibold tracking-[0.2em] text-paper">BURGEMBIRAAA</p>
+      <div className="absolute inset-0 bg-[#141211]" />
+      <div className="relative z-10 flex flex-col items-center gap-4 text-paper">
+        <Image src="/logo.png" alt="Burgembiraaa logo" width={100} height={100} priority className="splash-pulse" />
       </div>
     </div>
   );

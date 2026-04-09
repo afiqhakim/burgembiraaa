@@ -115,8 +115,8 @@ export default function LandingPage() {
       <section className="relative h-svh overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center will-change-transform" style={heroBgStyle} />
         <div
-          className={`relative flex h-full items-center justify-center px-6 text-center text-3xl font-bold text-paper transition-opacity duration-700 md:text-5xl ${
-            heroVisible ? "opacity-100" : "opacity-0"
+          className={`relative flex h-full items-center justify-center px-6 text-center text-3xl font-bold text-paper transition-all delay-[1800ms] duration-[1000ms] md:text-5xl ${
+            heroVisible ? "opacity-100 scale-100" : "opacity-0 scale-0.7"
           }`}
         >
           This is Burgembiraaa
