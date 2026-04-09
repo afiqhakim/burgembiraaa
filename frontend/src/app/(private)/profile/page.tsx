@@ -4,10 +4,10 @@ export default async function ProfilePage() {
   const user = await requirePageAccess("profile");
 
   return (
-    <div className="space-y-4">
+    <section className="space-y-6 bg-paper px-4 py-8 text-ink sm:px-6">
       <h1 className="text-3xl font-bold">Profile</h1>
-      <p className="text-muted-foreground">This page is private.</p>
-      <div className="rounded-lg border border-border p-4 text-sm">
+      <p className="text-ink/70">This page is private.</p>
+      <div className="rounded-lg border border-brand/30 bg-white p-4 text-sm">
         <p>
           <span className="font-medium">User ID:</span> {user.id}
         </p>
@@ -18,6 +18,6 @@ export default async function ProfilePage() {
           <span className="font-medium">Email:</span> {user.email ?? "-"}
         </p>
       </div>
-    </div>
+    </section>
   );
 }
