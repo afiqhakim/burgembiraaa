@@ -10,7 +10,7 @@ type CounterState = {
 };
 
 const initialCounters: CounterState = { popups: 0, burgers: 0, rotijohn: 0 };
-const counterTargets: CounterState = { popups: 14, burgers: 2075, rotijohn: 486 };
+const counterTargets: CounterState = { popups: 9, burgers: 405, rotijohn: 91 };
 
 const highlights = [
   {
@@ -59,12 +59,41 @@ function useCountUp(start: boolean) {
   return counters;
 }
 
+function useAnimatedNumber(target: number | null, start: boolean) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!start || target === null) return;
+
+    const durationMs = 2000;
+    const startTime = performance.now();
+    let frame = 0;
+
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / durationMs, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.floor(target * eased));
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(tick);
+      }
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [start, target]);
+
+  return value;
+}
+
 export default function LandingPage() {
   const [heroVisible, setHeroVisible] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [daysSinceLaunch, setDaysSinceLaunch] = useState<number | null>(null);
   const statsRef = useRef<HTMLElement | null>(null);
   const counters = useCountUp(statsVisible);
+  const animatedDaysSinceLaunch = useAnimatedNumber(daysSinceLaunch, statsVisible);
 
   useEffect(() => {
     const timer = setTimeout(() => setHeroVisible(true), 120);
@@ -85,10 +114,33 @@ export default function LandingPage() {
           setStatsVisible(true);
         }
       },
-      { threshold: 0.35 }
+      { threshold: 0.75 }
     );
     observer.observe(statsRef.current);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+
+    async function loadDays() {
+      try {
+        const response = await fetch(`${baseUrl}/stats/days-since-launch`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) return;
+        const data = (await response.json()) as { days_since_launch?: number };
+        if (typeof data.days_since_launch === "number") {
+          setDaysSinceLaunch(data.days_since_launch);
+        }
+      } catch {
+        // keep page usable even when API is unavailable
+      }
+    }
+
+    loadDays();
+    return () => controller.abort();
   }, []);
 
   const heroBgStyle = useMemo(
@@ -116,23 +168,27 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-cover bg-center will-change-transform" style={heroBgStyle} />
         <div
           className={`relative flex h-full items-center justify-center px-6 text-center text-3xl font-bold text-paper transition-all delay-[1800ms] duration-[1000ms] md:text-5xl ${
-            heroVisible ? "opacity-100 scale-100" : "opacity-0 scale-0.7"
+            heroVisible ? "opacity-100 scale-100" : "opacity-0 scale-[0.7]"
           }`}
         >
           This is Burgembiraaa
         </div>
       </section>
 
-      <section ref={statsRef} className="stats-section flex min-h-[70svh] items-center justify-center bg-paper px-6 text-ink">
+      <section ref={statsRef} className="stats-section flex min-h-[90svh] items-center justify-center bg-paper px-6 text-ink">
         <div className="space-y-6 text-center text-xl md:text-2xl">
           <div>
-            This year we&apos;ve made <span className="text-4xl font-bold text-accent-red">{counters.popups}</span> pop ups
+            It has been{" "}
+            <span className="text-4xl font-bold">{daysSinceLaunch === null ? "..." : animatedDaysSinceLaunch}</span> days since we started.
           </div>
           <div>
-            <span className="text-4xl font-bold text-accent-red">{counters.burgers}</span> burgers sold
+            We&apos;ve made <span className="text-4xl font-bold ">{counters.popups}</span> pop ups
           </div>
           <div>
-            <span className="text-4xl font-bold text-accent-red">{counters.rotijohn}</span> roti johns sold
+            <span className="text-4xl font-bold">{counters.burgers}</span> burgers sold
+          </div>
+          <div>
+            <span className="text-4xl font-bold">{counters.rotijohn}</span> roti johns sold
           </div>
         </div>
       </section>

@@ -13,6 +13,7 @@ from app.api.routes.auth import router as auth_router
 from app.api.routes.seller import router as seller_router
 from app.api.routes.products import router as products_router
 from app.api.routes.orders import router as orders_router
+from app.api.routes.stats import router as stats_router
 
 app = FastAPI()
 
@@ -35,6 +36,7 @@ app.include_router(auth_router)
 app.include_router(seller_router)
 app.include_router(products_router)
 app.include_router(orders_router)
+app.include_router(stats_router)
 
 
 @app.get("/")
