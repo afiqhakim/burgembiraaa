@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 type CounterState = {
   popups: number;
@@ -26,6 +27,10 @@ const highlights = [
     copy: "A sold-out acoustic night built around good food, good music, and good company.",
   },
 ];
+
+const HeroScene = dynamic(() => import("@/features/landing/components/hero-scene"), {
+  ssr: false,
+});
 
 function useCountUp(start: boolean) {
   const [counters, setCounters] = useState<CounterState>(initialCounters);
@@ -90,8 +95,15 @@ export default function LandingPage() {
   const [heroVisible, setHeroVisible] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [burgerProgress, setBurgerProgress] = useState(0);
+  const [burgerSpinStep, setBurgerSpinStep] = useState(0);
+  const [burgerSpinDirection, setBurgerSpinDirection] = useState<1 | -1>(1);
+  const [burgerSpinLocked, setBurgerSpinLocked] = useState(false);
   const [daysSinceLaunch, setDaysSinceLaunch] = useState<number | null>(null);
   const statsRef = useRef<HTMLElement | null>(null);
+  const burgerSectionRef = useRef<HTMLElement | null>(null);
+  const burgerSpinLockedRef = useRef(false);
+  const pendingScrollDeltaRef = useRef(0);
   const counters = useCountUp(statsVisible);
   const animatedDaysSinceLaunch = useAnimatedNumber(daysSinceLaunch, statsVisible);
 
@@ -101,10 +113,63 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY || 0);
+    const onScroll = () => {
+      setScrollY(window.scrollY || 0);
+
+      if (!burgerSectionRef.current) return;
+      const rect = burgerSectionRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 1;
+      const rawProgress = (viewportHeight - rect.top) / (viewportHeight + rect.height);
+      const clampedProgress = Math.min(1, Math.max(0, rawProgress));
+      setBurgerProgress(clampedProgress);
+    };
+
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    burgerSpinLockedRef.current = burgerSpinLocked;
+  }, [burgerSpinLocked]);
+
+  useEffect(() => {
+    const onWheel = (event: WheelEvent) => {
+      if (!burgerSectionRef.current) return;
+      const rect = burgerSectionRef.current.getBoundingClientRect();
+      const viewportMiddle = window.innerHeight * 0.5;
+      const sectionInFocus = rect.top < viewportMiddle && rect.bottom > viewportMiddle;
+      if (!sectionInFocus) return;
+
+      if (burgerSpinLockedRef.current) {
+        event.preventDefault();
+        return;
+      }
+
+      if (Math.abs(event.deltaY) < 4) return;
+
+      event.preventDefault();
+      const direction = event.deltaY > 0 ? 1 : -1;
+      pendingScrollDeltaRef.current = direction * 160;
+      setBurgerSpinLocked(true);
+      setBurgerSpinDirection(direction);
+      setBurgerSpinStep((prev) => prev + 1);
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, []);
+
+  const handleBurgerSpinComplete = () => {
+    setBurgerSpinLocked(false);
+    const pendingDelta = pendingScrollDeltaRef.current;
+    pendingScrollDeltaRef.current = 0;
+    if (pendingDelta !== 0) {
+      requestAnimationFrame(() => {
+        window.scrollBy({ top: pendingDelta, left: 0, behavior: "auto" });
+      });
+    }
+  };
 
   useEffect(() => {
     if (!statsRef.current) return;
@@ -172,6 +237,23 @@ export default function LandingPage() {
           }`}
         >
           This is Burgembiraaa
+        </div>
+      </section>
+
+      <section ref={burgerSectionRef} className="relative min-h-[120vh] overflow-hidden bg-splash">
+        <div className="absolute inset-0">
+          <HeroScene
+            scrollProgress={burgerProgress}
+            spinStep={burgerSpinStep}
+            spinDirection={burgerSpinDirection}
+            spinLocked={burgerSpinLocked}
+            onSpinComplete={handleBurgerSpinComplete}
+            backgroundColor="#141211"
+          />
+        </div>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(20,18,17,0.02)_0%,rgba(20,18,17,0.36)_72%,rgba(20,18,17,0.65)_100%)]" />
+        <div className="relative z-10 flex min-h-[95svh] items-end justify-center px-6 pb-14 text-center">
+          <p className="text-lg text-paper/85 md:text-xl">Our 3D Burger</p>
         </div>
       </section>
 
