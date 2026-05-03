@@ -1,0 +1,158 @@
+.main {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ── GHOST TITLE — large faded text at very bottom ── */
+.ghostTitle {
+  position: fixed;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+.ghostTitle span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5.5rem, 15vw, 16rem);
+  letter-spacing: 0.04em;
+  color: var(--black);
+  opacity: 0.065;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ── BG CONTOUR SVG ── */
+.bgSvg {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── INFO CARD — bottom left ── */
+.infoCard {
+  position: fixed;
+  bottom: 2.2rem;
+  left: 2.4rem;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.infoLabel {
+  font-size: 0.38rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(10,8,6,0.38);
+}
+.infoBox {
+  border: 1.5px solid var(--border);
+  padding: 0.95rem 1.05rem 1.1rem;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  background: rgba(237,234,228,0.82);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+.infoBox::before {
+  content: '';
+  position: absolute;
+  top: -1.5px;
+  left: 16px;
+  width: 26px;
+  height: 1.5px;
+  background: var(--bg);
+}
+.infoEvent {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  color: var(--black);
+  line-height: 1;
+}
+.infoEvent span {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.36rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(10,8,6,0.32);
+  margin-top: 0.28rem;
+}
+.infoMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-top: 1px solid rgba(10,8,6,0.08);
+  padding-top: 0.75rem;
+}
+.infoIcon {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(10,8,6,0.10);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  background: rgba(200,121,26,0.07);
+  flex-shrink: 0;
+}
+.infoMeta strong {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--black);
+  line-height: 1;
+  font-weight: 400;
+  display: block;
+}
+.infoMeta small {
+  font-size: 0.34rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(10,8,6,0.30);
+}
+
+/* ── CORNER BR ── */
+.cornerBr {
+  position: fixed;
+  bottom: 2.2rem;
+  right: 2.4rem;
+  z-index: 30;
+  font-size: 0.38rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(10,8,6,0.24);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* ── HINT ── */
+.hint {
+  position: fixed;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  font-size: 0.40rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(10,8,6,0.26);
+  pointer-events: none;
+  transition: opacity 1s ease;
+  animation: blink 3s ease-in-out infinite;
+  white-space: nowrap;
+}

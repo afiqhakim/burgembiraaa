@@ -1,0 +1,34 @@
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 2rem 2.4rem; pointer-events: none;
+}
+.nav a, .nav button { pointer-events: all; cursor: none; }
+
+.brand { display: flex; flex-direction: column; line-height: 1; }
+.brandTop, .brandBottom {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.55rem;
+  letter-spacing: .06em; color: var(--black); line-height: 1;
+}
+
+.right { display: flex; align-items: center; gap: .8rem; }
+
+.orderBtn {
+  display: flex; align-items: center; gap: .5rem;
+  background: var(--amber); color: var(--black);
+  font-family: 'Space Mono', monospace; font-size: .5rem;
+  letter-spacing: .2em; text-transform: uppercase;
+  padding: .65rem 1.3rem; text-decoration: none;
+  transition: background .25s, color .25s;
+}
+.orderBtn:hover { background: var(--black); color: var(--gold); }
+
+.menuBtn {
+  width: 44px; height: 44px;
+  border: 1.5px solid var(--border); background: transparent;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 5px; padding: 12px;
+  transition: border-color .25s;
+}
+.menuBtn:hover { border-color: var(--amber); }
+.menuBtn span { display: block; width: 100%; height: 1.5px; background: var(--black); }
